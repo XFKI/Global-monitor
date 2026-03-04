@@ -42,7 +42,9 @@
 			<div class="preset-grid">
 				{#each PRESET_ORDER as presetId}
 					{@const preset = PRESETS[presetId]}
-					{@const presetTr = ($tr.presets as Record<string, { name: string; description: string }>)[presetId]}
+					{@const presetTr = ($tr.presets as Record<string, { name: string; description: string }>)[
+						presetId
+					]}
 					<button class="preset-card" onclick={() => handleSelectPreset(presetId)}>
 						<div class="preset-icon">{preset.icon}</div>
 						<div class="preset-name">{presetTr?.name ?? preset.name}</div>

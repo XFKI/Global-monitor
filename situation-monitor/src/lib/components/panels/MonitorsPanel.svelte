@@ -41,7 +41,8 @@
 			<div class="empty-state">
 				<p>{$tr.monitorsPanel.empty}</p>
 				{#if onCreateMonitor}
-					<button class="create-btn" onclick={onCreateMonitor}>{$tr.monitorsPanel.createBtn}</button>
+					<button class="create-btn" onclick={onCreateMonitor}>{$tr.monitorsPanel.createBtn}</button
+					>
 				{/if}
 			</div>
 		{:else}
@@ -71,13 +72,17 @@
 										class="action-btn"
 										class:active={monitor.enabled}
 										onclick={() => onToggleMonitor?.(monitor.id)}
-									title={monitor.enabled ? $tr.monitorsPanel.disable : $tr.monitorsPanel.enable}
+										title={monitor.enabled ? $tr.monitorsPanel.disable : $tr.monitorsPanel.enable}
 									>
 										{monitor.enabled ? '●' : '○'}
 									</button>
 								{/if}
 								{#if onEditMonitor}
-								<button class="action-btn" onclick={() => onEditMonitor?.(monitor)} title={$tr.monitorsPanel.edit}>
+									<button
+										class="action-btn"
+										onclick={() => onEditMonitor?.(monitor)}
+										title={$tr.monitorsPanel.edit}
+									>
 										✎
 									</button>
 								{/if}

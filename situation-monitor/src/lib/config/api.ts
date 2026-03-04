@@ -4,10 +4,12 @@
 
 import { browser } from '$app/environment';
 
+// ============================================================================
+// API Keys
+// ============================================================================
+
 /**
- * Finnhub API key
- * Get your free key at: https://finnhub.io/
- * Free tier: 60 calls/minute
+ * Finnhub API key — get a free key at https://finnhub.io/ (60 calls/min)
  */
 export const FINNHUB_API_KEY = browser
 	? (import.meta.env?.VITE_FINNHUB_API_KEY ?? '')
@@ -16,9 +18,7 @@ export const FINNHUB_API_KEY = browser
 export const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 
 /**
- * FRED API key (St. Louis Fed)
- * Get your free key at: https://fred.stlouisfed.org/docs/api/api_key.html
- * Free tier: Unlimited requests
+ * FRED API key — get a free key at https://fred.stlouisfed.org/docs/api/api_key.html (unlimited)
  */
 export const FRED_API_KEY = browser
 	? (import.meta.env?.VITE_FRED_API_KEY ?? '')
@@ -26,48 +26,77 @@ export const FRED_API_KEY = browser
 
 export const FRED_BASE_URL = 'https://api.stlouisfed.org/fred';
 
-/**
- * Check if we're in development mode
- * Uses import.meta.env which is available in both browser and test environments
- */
+// ============================================================================
+// Logging
+// ============================================================================
+
 const isDev = browser ? (import.meta.env?.DEV ?? false) : false;
 
 /**
+ * Debug/logging configuration
+ */
+export const DEBUG = {
+	enabled: isDev,
+	logApiCalls: isDev,
+	logCacheHits: false
+} as const;
+
+/**
+ * Conditional logger — only logs in development
+ */
+export const logger = {
+	log: (prefix: string, ...args: unknown[]) => {
+		if (DEBUG.logApiCalls) {
+			console.log(`[${prefix}]`, ...args);
+		}
+	},
+	warn: (prefix: string, ...args: unknown[]) => {
+		console.warn(`[${prefix}]`, ...args);
+	},
+	error: (prefix: string, ...args: unknown[]) => {
+		console.error(`[${prefix}]`, ...args);
+	}
+};
+
+// ============================================================================
+// CORS Proxy
+// ============================================================================
+
+/**
  * CORS proxy URLs for external API requests
- * Primary: allorigins.win (reliable, no rate limit on GET)
- * Secondary: corsproxy.io (fallback)
- * Tertiary: direct fetch (works for APIs with CORS headers like GDELT)
+ * Primary:   allorigins.win — works for most RSS feeds, no auth required
+ * Secondary: corsproxy.io  — fallback (blocked by some news publishers)
+ * Direct fetch is used as the last resort for CORS-enabled APIs (GDELT, Finnhub, FRED)
  */
 export const CORS_PROXIES = {
 	primary: 'https://api.allorigins.win/raw?url=',
-	fallback: 'https://corsproxy.io/?url=',
-	tertiary: 'https://cors.eu.org/'
+	secondary: 'https://corsproxy.io/?url='
 } as const;
 
-// Default export for backward compatibility
+/** Convenience alias pointing to the primary proxy */
 export const CORS_PROXY_URL = CORS_PROXIES.primary;
 
 /**
  * Fetch with CORS proxy cascade
- * Tries primary → fallback → direct, returns first success
+ * Tries primary → secondary → direct fetch, returns first success
  */
 export async function fetchWithProxy(url: string): Promise<Response> {
 	const encodedUrl = encodeURIComponent(url);
 
-	// 1. Try primary proxy (allorigins.win)
+	// 1. Primary proxy (allorigins.win)
 	try {
 		const response = await fetch(CORS_PROXIES.primary + encodedUrl, {
 			signal: AbortSignal.timeout(12000)
 		});
 		if (response.ok) return response;
-		logger.warn('API', `Primary proxy failed (${response.status}), trying fallback`);
+		logger.warn('API', `Primary proxy failed (${response.status}), trying secondary`);
 	} catch (error) {
-		logger.warn('API', 'Primary proxy error, trying fallback:', error);
+		logger.warn('API', 'Primary proxy error, trying secondary:', error);
 	}
 
-	// 2. Try secondary proxy (corsproxy.io)
+	// 2. Secondary proxy (corsproxy.io)
 	try {
-		const response = await fetch(CORS_PROXIES.fallback + encodedUrl, {
+		const response = await fetch(CORS_PROXIES.secondary + encodedUrl, {
 			signal: AbortSignal.timeout(12000)
 		});
 		if (response.ok) return response;
@@ -76,9 +105,13 @@ export async function fetchWithProxy(url: string): Promise<Response> {
 		logger.warn('API', 'Secondary proxy error, trying direct:', error);
 	}
 
-	// 3. Try direct fetch (works for GDELT and other CORS-enabled APIs)
+	// 3. Direct fetch — works for APIs that include CORS headers (GDELT, Finnhub, FRED)
 	return fetch(url, { signal: AbortSignal.timeout(15000) });
 }
+
+// ============================================================================
+// Rate Limiting & Caching
+// ============================================================================
 
 /**
  * API request delays (ms) to avoid rate limiting
@@ -97,29 +130,3 @@ export const CACHE_TTLS = {
 	markets: 60 * 1000, // 1 minute
 	default: 5 * 60 * 1000 // 5 minutes
 } as const;
-
-/**
- * Debug/logging configuration
- */
-export const DEBUG = {
-	enabled: isDev,
-	logApiCalls: isDev,
-	logCacheHits: false
-} as const;
-
-/**
- * Conditional logger - only logs in development
- */
-export const logger = {
-	log: (prefix: string, ...args: unknown[]) => {
-		if (DEBUG.logApiCalls) {
-			console.log(`[${prefix}]`, ...args);
-		}
-	},
-	warn: (prefix: string, ...args: unknown[]) => {
-		console.warn(`[${prefix}]`, ...args);
-	},
-	error: (prefix: string, ...args: unknown[]) => {
-		console.error(`[${prefix}]`, ...args);
-	}
-};

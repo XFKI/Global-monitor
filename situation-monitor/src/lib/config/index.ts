@@ -80,7 +80,19 @@ export {
 } from './presets';
 
 // API configuration
-export { CORS_PROXY_URL, API_DELAYS, CACHE_TTLS, DEBUG, logger, FINNHUB_API_KEY, FINNHUB_BASE_URL } from './api';
+export {
+	CORS_PROXY_URL,
+	CORS_PROXIES,
+	API_DELAYS,
+	CACHE_TTLS,
+	DEBUG,
+	logger,
+	fetchWithProxy,
+	FINNHUB_API_KEY,
+	FINNHUB_BASE_URL,
+	FRED_API_KEY,
+	FRED_BASE_URL
+} from './api';
 
 // World leaders configuration
 export { WORLD_LEADERS } from './leaders';

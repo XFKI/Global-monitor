@@ -118,7 +118,8 @@
 
 		<div class="form-actions">
 			{#if editMonitor}
-				<button type="button" class="delete-btn" onclick={handleDelete}>{$tr.monitor.delete}</button>
+				<button type="button" class="delete-btn" onclick={handleDelete}>{$tr.monitor.delete}</button
+				>
 			{/if}
 			<button type="button" class="cancel-btn" onclick={onClose}>{$tr.monitor.cancel}</button>
 			<button type="submit" class="submit-btn">
