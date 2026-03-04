@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { PRESETS, PRESET_ORDER } from '$lib/config';
+	import { tr } from '$lib/stores';
 
 	interface Props {
 		open: boolean;
@@ -34,24 +35,25 @@
 				<button class="close-btn" onclick={handleClose} aria-label="Skip onboarding">
 					&times;
 				</button>
-				<h2>Welcome to Situation Monitor</h2>
-				<p class="subtitle">Choose a dashboard configuration to get started</p>
+				<h2>{$tr.onboarding.title}</h2>
+				<p class="subtitle">{$tr.onboarding.subtitle}</p>
 			</div>
 
 			<div class="preset-grid">
 				{#each PRESET_ORDER as presetId}
 					{@const preset = PRESETS[presetId]}
+					{@const presetTr = ($tr.presets as Record<string, { name: string; description: string }>)[presetId]}
 					<button class="preset-card" onclick={() => handleSelectPreset(presetId)}>
 						<div class="preset-icon">{preset.icon}</div>
-						<div class="preset-name">{preset.name}</div>
-						<div class="preset-description">{preset.description}</div>
-						<div class="preset-panel-count">{preset.panels.length} panels</div>
+						<div class="preset-name">{presetTr?.name ?? preset.name}</div>
+						<div class="preset-description">{presetTr?.description ?? preset.description}</div>
+						<div class="preset-panel-count">{$tr.onboarding.panelCount(preset.panels.length)}</div>
 					</button>
 				{/each}
 			</div>
 
 			<div class="modal-footer">
-				<p class="hint">You can change this later in Settings</p>
+				<p class="hint">{$tr.onboarding.hint}</p>
 			</div>
 		</div>
 	</div>

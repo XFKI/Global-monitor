@@ -77,3 +77,6 @@ export {
 	type FedIndicatorsState,
 	type FedNewsState
 } from './fed';
+
+// Language store
+export { lang, tr, toggleLang } from './lang';

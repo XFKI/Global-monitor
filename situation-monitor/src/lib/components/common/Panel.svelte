@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { PanelId } from '$lib/config';
+	import { tr } from '$lib/stores';
 
 	interface Props {
 		id: PanelId;
@@ -41,12 +42,15 @@
 			onCollapse();
 		}
 	}
+
+	// Use translated panel title if available, otherwise fallback to prop
+	const displayTitle = $derived(($tr.panels as Record<string, string>)[id] ?? title);
 </script>
 
 <div class="panel" class:draggable class:collapsed data-panel-id={id}>
 	<div class="panel-header">
 		<div class="panel-title-row">
-			<h3 class="panel-title">{title}</h3>
+			<h3 class="panel-title">{displayTitle}</h3>
 			{#if count !== null}
 				<span class="panel-count">{count}</span>
 			{/if}
@@ -78,7 +82,7 @@
 		{#if error}
 			<div class="error-msg">{error}</div>
 		{:else if loading}
-			<div class="loading-msg">Loading...</div>
+			<div class="loading-msg">{$tr.common.loading}</div>
 		{:else}
 			{@render children()}
 		{/if}

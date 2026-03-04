@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
-	import { monitors } from '$lib/stores';
+	import { monitors, tr } from '$lib/stores';
 	import type { CustomMonitor } from '$lib/types';
 
 	interface Props {
@@ -14,7 +14,7 @@
 	let name = $state('');
 	let keywords = $state('');
 	let enabled = $state(true);
-	let error = $state('');
+	let errorKey = $state<string>('');
 
 	// Reset form when modal opens
 	$effect(() => {
@@ -28,7 +28,7 @@
 				keywords = '';
 				enabled = true;
 			}
-			error = '';
+			errorKey = '';
 		}
 	});
 
@@ -42,24 +42,22 @@
 			.filter((k) => k.length > 0);
 
 		if (!trimmedName) {
-			error = 'Name is required';
+			errorKey = 'validationName';
 			return;
 		}
 
 		if (keywordList.length === 0) {
-			error = 'At least one keyword is required';
+			errorKey = 'validationKeywords';
 			return;
 		}
 
 		if (editMonitor) {
-			// Update existing monitor
 			monitors.updateMonitor(editMonitor.id, {
 				name: trimmedName,
 				keywords: keywordList,
 				enabled
 			});
 		} else {
-			// Create new monitor
 			const result = monitors.addMonitor({
 				name: trimmedName,
 				keywords: keywordList,
@@ -67,7 +65,7 @@
 			});
 
 			if (!result) {
-				error = 'Maximum number of monitors reached (20)';
+				errorKey = 'validationMax';
 				return;
 			}
 		}
@@ -83,48 +81,48 @@
 	}
 </script>
 
-<Modal {open} title={editMonitor ? 'Edit Monitor' : 'Create Monitor'} {onClose}>
+<Modal {open} title={editMonitor ? $tr.monitor.editTitle : $tr.monitor.createTitle} {onClose}>
 	<form class="monitor-form" onsubmit={handleSubmit}>
-		{#if error}
-			<div class="form-error">{error}</div>
+		{#if errorKey}
+			<div class="form-error">{($tr.monitor as Record<string, string>)[errorKey]}</div>
 		{/if}
 
 		<div class="form-group">
-			<label for="monitor-name">Name</label>
+			<label for="monitor-name">{$tr.monitor.nameLabel}</label>
 			<input
 				id="monitor-name"
 				type="text"
 				bind:value={name}
-				placeholder="e.g., Ukraine Crisis"
+				placeholder={$tr.monitor.namePlaceholder}
 				maxlength="50"
 			/>
 		</div>
 
 		<div class="form-group">
-			<label for="monitor-keywords">Keywords (comma separated)</label>
+			<label for="monitor-keywords">{$tr.monitor.keywordsLabel}</label>
 			<input
 				id="monitor-keywords"
 				type="text"
 				bind:value={keywords}
-				placeholder="e.g., ukraine, zelensky, kyiv"
+				placeholder={$tr.monitor.keywordsPlaceholder}
 			/>
-			<p class="form-hint">News matching any of these keywords will appear in your monitor</p>
+			<p class="form-hint">{$tr.monitor.keywordsHint}</p>
 		</div>
 
 		<div class="form-group">
 			<label class="checkbox-label">
 				<input type="checkbox" bind:checked={enabled} />
-				<span>Enabled</span>
+				<span>{$tr.monitor.enabled}</span>
 			</label>
 		</div>
 
 		<div class="form-actions">
 			{#if editMonitor}
-				<button type="button" class="delete-btn" onclick={handleDelete}> Delete </button>
+				<button type="button" class="delete-btn" onclick={handleDelete}>{$tr.monitor.delete}</button>
 			{/if}
-			<button type="button" class="cancel-btn" onclick={onClose}> Cancel </button>
+			<button type="button" class="cancel-btn" onclick={onClose}>{$tr.monitor.cancel}</button>
 			<button type="submit" class="submit-btn">
-				{editMonitor ? 'Save Changes' : 'Create Monitor'}
+				{editMonitor ? $tr.monitor.save : $tr.monitor.create}
 			</button>
 		</div>
 	</form>

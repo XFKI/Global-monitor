@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
-	import { settings } from '$lib/stores';
+	import { settings, tr } from '$lib/stores';
 	import { PANELS, type PanelId } from '$lib/config';
 
 	interface Props {
@@ -20,23 +20,24 @@
 	}
 </script>
 
-<Modal {open} title="Settings" {onClose}>
+<Modal {open} title={$tr.settings.title} {onClose}>
 	<div class="settings-sections">
 		<section class="settings-section">
-			<h3 class="section-title">Enabled Panels</h3>
-			<p class="section-desc">Toggle panels on/off to customize your dashboard</p>
+			<h3 class="section-title">{$tr.settings.enabledPanels}</h3>
+			<p class="section-desc">{$tr.settings.panelsDesc}</p>
 
 			<div class="panels-grid">
 				{#each Object.entries(PANELS) as [id, config]}
 					{@const panelId = id as PanelId}
 					{@const isEnabled = $settings.enabled[panelId]}
+					{@const translatedName = ($tr.panels as Record<string, string>)[panelId] ?? config.name}
 					<label class="panel-toggle" class:enabled={isEnabled}>
 						<input
 							type="checkbox"
 							checked={isEnabled}
 							onchange={() => handleTogglePanel(panelId)}
 						/>
-						<span class="panel-name">{config.name}</span>
+						<span class="panel-name">{translatedName}</span>
 						<span class="panel-priority">P{config.priority}</span>
 					</label>
 				{/each}
@@ -44,12 +45,12 @@
 		</section>
 
 		<section class="settings-section">
-			<h3 class="section-title">Dashboard</h3>
+			<h3 class="section-title">{$tr.settings.dashboard}</h3>
 			{#if onReconfigure}
-				<button class="reconfigure-btn" onclick={onReconfigure}> Reconfigure Dashboard </button>
-				<p class="btn-hint">Choose a preset profile for your panels</p>
+				<button class="reconfigure-btn" onclick={onReconfigure}>{$tr.settings.reconfigure}</button>
+				<p class="btn-hint">{$tr.settings.reconfigureHint}</p>
 			{/if}
-			<button class="reset-btn" onclick={handleResetPanels}> Reset All Settings </button>
+			<button class="reset-btn" onclick={handleResetPanels}>{$tr.settings.resetAll}</button>
 		</section>
 	</div>
 </Modal>

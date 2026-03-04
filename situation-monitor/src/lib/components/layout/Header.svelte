@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isRefreshing, lastRefresh } from '$lib/stores';
+	import { isRefreshing, lastRefresh, tr, toggleLang } from '$lib/stores';
 
 	interface Props {
 		onSettingsClick?: () => void;
@@ -9,20 +9,20 @@
 
 	const lastRefreshText = $derived(
 		$lastRefresh
-			? `Last updated: ${new Date($lastRefresh).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
-			: 'Never refreshed'
+			? `${$tr.header.lastUpdated} ${new Date($lastRefresh).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+			: $tr.header.neverRefreshed
 	);
 </script>
 
 <header class="header">
 	<div class="header-left">
-		<h1 class="logo">SITUATION MONITOR</h1>
+		<h1 class="logo">{$tr.header.title}</h1>
 	</div>
 
 	<div class="header-center">
 		<div class="refresh-status">
 			{#if $isRefreshing}
-				<span class="status-text loading">Refreshing...</span>
+				<span class="status-text loading">{$tr.header.refreshing}</span>
 			{:else}
 				<span class="status-text">{lastRefreshText}</span>
 			{/if}
@@ -30,9 +30,12 @@
 	</div>
 
 	<div class="header-right">
-		<button class="header-btn settings-btn" onclick={onSettingsClick} title="Settings">
+		<button class="header-btn lang-btn" onclick={toggleLang} title="Switch Language">
+			<span class="btn-label">{$tr.header.langToggle}</span>
+		</button>
+		<button class="header-btn settings-btn" onclick={onSettingsClick} title={$tr.header.settings}>
 			<span class="btn-icon">⚙</span>
-			<span class="btn-label">Settings</span>
+			<span class="btn-label">{$tr.header.settings}</span>
 		</button>
 	</div>
 </header>
@@ -119,6 +122,13 @@
 	.header-btn:hover {
 		background: var(--border);
 		color: var(--text-primary);
+	}
+
+	.lang-btn {
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		min-width: 2.5rem;
+		justify-content: center;
 	}
 
 	.btn-icon {
