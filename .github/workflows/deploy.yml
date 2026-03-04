@@ -36,8 +36,8 @@ jobs:
         working-directory: situation-monitor
         env:
           BASE_PATH: '/Global-monitor'
-          VITE_FINNHUB_API_KEY: ${{ secrets.VITE_FINNHUB_API_KEY }}
-          VITE_FRED_API_KEY: ${{ secrets.VITE_FRED_API_KEY }}
+          VITE_FINNHUB_API_KEY: 'd6jvprpr01qkvh5rjrh0d6jvprpr01qkvh5rjrhg'
+          VITE_FRED_API_KEY: 'cb3bad608b0ef966d28e2660d24af23d'
         run: npm run build
 
       - name: Upload artifact

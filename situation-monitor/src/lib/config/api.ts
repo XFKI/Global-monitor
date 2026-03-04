@@ -34,38 +34,50 @@ const isDev = browser ? (import.meta.env?.DEV ?? false) : false;
 
 /**
  * CORS proxy URLs for external API requests
- * Primary: Custom Cloudflare Worker (faster, dedicated)
- * Fallback: corsproxy.io (public, may rate limit)
+ * Primary: allorigins.win (reliable, no rate limit on GET)
+ * Secondary: corsproxy.io (fallback)
+ * Tertiary: direct fetch (works for APIs with CORS headers like GDELT)
  */
 export const CORS_PROXIES = {
-	primary: 'https://situation-monitor-proxy.seanthielen-e.workers.dev/?url=',
-	fallback: 'https://corsproxy.io/?url='
+	primary: 'https://api.allorigins.win/raw?url=',
+	fallback: 'https://corsproxy.io/?url=',
+	tertiary: 'https://cors.eu.org/'
 } as const;
 
 // Default export for backward compatibility
-export const CORS_PROXY_URL = CORS_PROXIES.fallback;
+export const CORS_PROXY_URL = CORS_PROXIES.primary;
 
 /**
- * Fetch with CORS proxy fallback
- * Tries primary proxy first, falls back to secondary on failure
+ * Fetch with CORS proxy cascade
+ * Tries primary → fallback → direct, returns first success
  */
 export async function fetchWithProxy(url: string): Promise<Response> {
 	const encodedUrl = encodeURIComponent(url);
 
-	// Try primary proxy first
+	// 1. Try primary proxy (allorigins.win)
 	try {
-		const response = await fetch(CORS_PROXIES.primary + encodedUrl);
-		if (response.ok) {
-			return response;
-		}
-		// If we get an error response, try fallback
+		const response = await fetch(CORS_PROXIES.primary + encodedUrl, {
+			signal: AbortSignal.timeout(12000)
+		});
+		if (response.ok) return response;
 		logger.warn('API', `Primary proxy failed (${response.status}), trying fallback`);
 	} catch (error) {
 		logger.warn('API', 'Primary proxy error, trying fallback:', error);
 	}
 
-	// Fallback to secondary proxy
-	return fetch(CORS_PROXIES.fallback + encodedUrl);
+	// 2. Try secondary proxy (corsproxy.io)
+	try {
+		const response = await fetch(CORS_PROXIES.fallback + encodedUrl, {
+			signal: AbortSignal.timeout(12000)
+		});
+		if (response.ok) return response;
+		logger.warn('API', `Secondary proxy failed (${response.status}), trying direct`);
+	} catch (error) {
+		logger.warn('API', 'Secondary proxy error, trying direct:', error);
+	}
+
+	// 3. Try direct fetch (works for GDELT and other CORS-enabled APIs)
+	return fetch(url, { signal: AbortSignal.timeout(15000) });
 }
 
 /**
