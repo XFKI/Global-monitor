@@ -23,6 +23,8 @@
 		PrinterPanel,
 		FedPanel
 	} from '$lib/components/panels';
+	import CnMarketsPanel from '$lib/components/panels/CnMarketsPanel.svelte';
+	import AiPulsePanel from '$lib/components/panels/AiPulsePanel.svelte';
 	import {
 		news,
 		markets,
@@ -31,7 +33,8 @@
 		refresh,
 		allNewsItems,
 		fedIndicators,
-		fedNews
+		fedNews,
+		cnMarkets
 	} from '$lib/stores';
 	import {
 		fetchAllNews,
@@ -44,6 +47,7 @@
 		fetchFedIndicators,
 		fetchFedNews
 	} from '$lib/api';
+	import { fetchCNMarkets } from '$lib/api/markets';
 	import type { Prediction, WhaleTransaction, Contract, Layoff } from '$lib/api';
 	import type { CustomMonitor, WorldLeader } from '$lib/types';
 	import type { PanelId } from '$lib/config';
@@ -87,6 +91,17 @@
 			markets.setCrypto(data.crypto);
 		} catch (error) {
 			console.error('Failed to load markets:', error);
+		}
+	}
+
+	async function loadCNMarkets() {
+		if (!isPanelVisible('cn-markets')) return;
+		cnMarkets.setLoading(true);
+		try {
+			const items = await fetchCNMarkets();
+			cnMarkets.setItems(items);
+		} catch (error) {
+			cnMarkets.setError(String(error));
 		}
 	}
 
@@ -138,7 +153,7 @@
 	async function handleRefresh() {
 		refresh.startRefresh();
 		try {
-			await Promise.all([loadNews(), loadMarkets()]);
+			await Promise.all([loadNews(), loadMarkets(), loadCNMarkets()]);
 			refresh.endRefresh();
 		} catch (error) {
 			refresh.endRefresh([String(error)]);
@@ -198,6 +213,7 @@
 				await Promise.all([
 					loadNews(),
 					loadMarkets(),
+					loadCNMarkets(),
 					loadMiscData(),
 					loadWorldLeaders(),
 					loadFedData()
@@ -260,7 +276,14 @@
 
 			{#if isPanelVisible('ai')}
 				<div class="panel-slot">
-					<NewsPanel category="ai" panelId="ai" title="AI" />
+					<NewsPanel category="ai" panelId="ai" title="AI Arms Race" />
+				</div>
+			{/if}
+
+			<!-- AI Pulse Panel -->
+			{#if isPanelVisible('ai-pulse')}
+				<div class="panel-slot">
+					<AiPulsePanel />
 				</div>
 			{/if}
 
@@ -268,6 +291,13 @@
 			{#if isPanelVisible('markets')}
 				<div class="panel-slot">
 					<MarketsPanel />
+				</div>
+			{/if}
+
+			<!-- CN Markets Panel -->
+			{#if isPanelVisible('cn-markets')}
+				<div class="panel-slot">
+					<CnMarketsPanel />
 				</div>
 			{/if}
 

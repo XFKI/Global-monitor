@@ -106,7 +106,9 @@ export const en: Translations = {
 		intel: 'Intel Feed',
 		correlation: 'Pattern Analysis',
 		narrative: 'Narrative Tracker',
-		fed: 'Federal Reserve'
+		fed: 'Federal Reserve',
+		'cn-markets': 'Chinese Markets',
+		'ai-pulse': 'AI Pulse'
 	},
 	settings: {
 		title: 'Settings',
@@ -218,7 +220,9 @@ export const zh: Translations = {
 		intel: '情报流',
 		correlation: '相关性分析',
 		narrative: '叙事追踪器',
-		fed: '美联储'
+		fed: '美联储',
+		'cn-markets': '中国股市',
+		'ai-pulse': 'AI动态热点'
 	},
 	settings: {
 		title: '设置',

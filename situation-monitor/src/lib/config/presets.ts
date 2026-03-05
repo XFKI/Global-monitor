@@ -18,7 +18,7 @@ export const PRESETS: Record<string, Preset> = {
 		name: 'News Junkie',
 		icon: '📰',
 		description: 'Stay on top of breaking news across politics, tech, and finance',
-		panels: ['politics', 'tech', 'finance', 'gov', 'ai', 'mainchar', 'map']
+		panels: ['politics', 'tech', 'finance', 'gov', 'ai', 'ai-pulse', 'mainchar', 'map']
 	},
 	trader: {
 		id: 'trader',
@@ -27,6 +27,7 @@ export const PRESETS: Record<string, Preset> = {
 		description: 'Market-focused dashboard with stocks, crypto, and commodities',
 		panels: [
 			'markets',
+			'cn-markets',
 			'heatmap',
 			'commodities',
 			'crypto',
@@ -67,7 +68,7 @@ export const PRESETS: Record<string, Preset> = {
 		name: 'Minimal',
 		icon: '⚡',
 		description: 'Just the essentials - map, news, and markets',
-		panels: ['map', 'politics', 'markets']
+		panels: ['map', 'politics', 'markets', 'cn-markets']
 	},
 	everything: {
 		id: 'everything',
@@ -82,6 +83,7 @@ export const PRESETS: Record<string, Preset> = {
 			'gov',
 			'heatmap',
 			'markets',
+			'cn-markets',
 			'monitors',
 			'commodities',
 			'crypto',
@@ -91,6 +93,7 @@ export const PRESETS: Record<string, Preset> = {
 			'printer',
 			'contracts',
 			'ai',
+			'ai-pulse',
 			'layoffs',
 			'venezuela',
 			'greenland',

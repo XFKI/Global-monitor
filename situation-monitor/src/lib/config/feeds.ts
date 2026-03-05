@@ -17,24 +17,30 @@ export interface IntelSource extends FeedSource {
 
 export const FEEDS: Record<NewsCategory, FeedSource[]> = {
 	politics: [
-		{ name: 'BBC World', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-		{ name: 'NPR News', url: 'https://feeds.npr.org/1001/rss.xml' },
-		{ name: 'Guardian World', url: 'https://www.theguardian.com/world/rss' },
-		{ name: 'NYT World', url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml' }
+		{ name: '新华社', url: 'https://feeds.bbci.co.uk/zhongwen/simp/world/rss.xml' },
+		{ name: 'BBC中文', url: 'https://feeds.bbci.co.uk/zhongwen/simp/world/rss.xml' },
+		{ name: '路透中文', url: 'https://cn.reuters.com/rssFeed/CNTopGenNews' },
+		{ name: '纽约时报中文', url: 'https://cn.nytimes.com/rss/' },
+		{ name: '德国之声中文', url: 'https://rss.dw.com/xml/rss-zh-all' },
+		{ name: 'CNN国际', url: 'https://rss.cnn.com/rss/edition_world.rss' },
+		{ name: 'Reuters', url: 'https://feeds.reuters.com/reuters/worldNews' }
 	],
 	tech: [
-		{ name: 'Hacker News', url: 'https://hnrss.org/frontpage' },
-		{ name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/technology-lab' },
-		{ name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml' },
-		{ name: 'MIT Tech Review', url: 'https://www.technologyreview.com/feed/' },
+		{ name: '机器之心', url: 'https://www.jiqizhixin.com/rss' },
+		{ name: 'IT之家', url: 'https://www.ithome.com/rss/' },
+		{ name: '36氪', url: 'https://36kr.com/feed' },
+		{ name: '虎嗅', url: 'https://www.huxiu.com/rss/0.xml' },
+		{ name: 'MIT科技评论', url: 'https://www.technologyreview.com/feed/' },
 		{ name: 'ArXiv AI', url: 'https://rss.arxiv.org/rss/cs.AI' },
-		{ name: 'OpenAI Blog', url: 'https://openai.com/news/rss.xml' }
+		{ name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml' }
 	],
 	finance: [
+		{ name: '财联社', url: 'https://www.cls.cn/rss' },
+		{ name: '第一财经', url: 'https://www.yicai.com/rss/' },
+		{ name: '证券时报', url: 'https://www.stcn.com/rss.xml' },
+		{ name: '华尔街日报中文', url: 'https://cn.wsj.com/rss/opinion' },
 		{ name: 'CNBC', url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html' },
 		{ name: 'MarketWatch', url: 'https://feeds.marketwatch.com/marketwatch/topstories' },
-		{ name: 'Yahoo Finance', url: 'https://finance.yahoo.com/news/rssindex' },
-		{ name: 'BBC Business', url: 'https://feeds.bbci.co.uk/news/business/rss.xml' },
 		{ name: 'FT', url: 'https://www.ft.com/rss/home' }
 	],
 	gov: [
@@ -47,8 +53,11 @@ export const FEEDS: Record<NewsCategory, FeedSource[]> = {
 		}
 	],
 	ai: [
+		{ name: '机器之心', url: 'https://www.jiqizhixin.com/rss' },
+		{ name: '量子位', url: 'https://www.qbitai.com/rss.xml' },
+		{ name: 'ArXiv AI', url: 'https://rss.arxiv.org/rss/cs.AI' },
 		{ name: 'OpenAI Blog', url: 'https://openai.com/news/rss.xml' },
-		{ name: 'ArXiv AI', url: 'https://rss.arxiv.org/rss/cs.AI' }
+		{ name: 'Hugging Face', url: 'https://huggingface.co/blog/feed.xml' }
 	],
 	intel: [
 		{ name: 'CSIS', url: 'https://www.csis.org/analysis/feed' },

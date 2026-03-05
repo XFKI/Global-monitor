@@ -51,3 +51,23 @@ export const CRYPTO = [
 	{ id: 'ethereum', symbol: 'ETH', name: 'Ethereum' },
 	{ id: 'solana', symbol: 'SOL', name: 'Solana' }
 ];
+
+// Chinese A-share and HK indices
+export const CN_INDICES = [
+	{ symbol: '000001.SS', name: '上证指数', display: 'SSE', exchange: '上交所' },
+	{ symbol: '399001.SZ', name: '深证成指', display: 'SZSE', exchange: '深交所' },
+	{ symbol: '000300.SH', name: '沪深300', display: 'CSI300', exchange: '沪深' },
+	{ symbol: '399006.SZ', name: '创业板指', display: 'GEM', exchange: '创业板' },
+	{ symbol: '^HSI', name: '恒生指数', display: 'HSI', exchange: '港交所' },
+	{ symbol: '^HSCE', name: '国企指数', display: 'HSCE', exchange: '港交所' }
+];
+
+// Chinese A-share sector ETFs (via Sina Finance / Yahoo Finance)
+export const CN_SECTORS: SectorConfig[] = [
+	{ symbol: '512690.SS', name: '消费ETF' },
+	{ symbol: '512760.SS', name: '芯片ETF' },
+	{ symbol: '515000.SS', name: '房地产ETF' },
+	{ symbol: '159928.SZ', name: '消费ETF(深)' },
+	{ symbol: '159915.SZ', name: '创业板ETF' },
+	{ symbol: '588000.SS', name: '科创50ETF' }
+];

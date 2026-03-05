@@ -92,20 +92,23 @@ function transformGdeltArticle(
 export async function fetchCategoryNews(category: NewsCategory): Promise<NewsItem[]> {
 	// Build query from category keywords (GDELT requires OR queries in parentheses)
 	const categoryQueries: Record<NewsCategory, string> = {
-		politics: '(politics OR government OR election OR congress)',
-		tech: '(technology OR software OR startup OR "silicon valley")',
-		finance: '(finance OR "stock market" OR economy OR banking)',
-		gov: '("federal government" OR "white house" OR congress OR regulation)',
-		ai: '("artificial intelligence" OR "machine learning" OR AI OR ChatGPT)',
-		intel: '(intelligence OR security OR military OR defense)'
+		politics:
+			'(politics OR government OR election OR geopolitics OR "foreign policy" OR 政治 OR 外交 OR 冲突 OR 制裁) (domain:xinhuanet.com OR domain:bbc.co.uk OR domain:reuters.com OR domain:nytimes.com OR domain:theguardian.com OR domain:cnn.com OR domain:dw.com OR domain:people.com.cn)',
+		tech: '(technology OR "artificial intelligence" OR software OR semiconductor OR chip OR 人工智能 OR 芯片 OR 科技 OR 创新) (domain:jiqizhixin.com OR domain:ithome.com OR domain:36kr.com OR domain:technologyreview.com OR domain:theverge.com OR domain:huxiu.com)',
+		finance:
+			'(finance OR economy OR "stock market" OR banking OR "interest rate" OR 经济 OR 股市 OR 金融 OR A股 OR 人民币) (domain:cls.cn OR domain:yicai.com OR domain:cnbc.com OR domain:ft.com OR domain:wsj.com OR domain:marketwatch.com)',
+		gov: '("federal government" OR "white house" OR congress OR regulation OR policy OR 政策 OR 监管)',
+		ai: '("artificial intelligence" OR "machine learning" OR "large language model" OR AI OR ChatGPT OR "大模型" OR 人工智能 OR DeepSeek OR "生成式AI") (domain:jiqizhixin.com OR domain:qbitai.com OR domain:openai.com OR domain:anthropic.com OR domain:huggingface.co OR domain:arxiv.org)',
+		intel:
+			'(intelligence OR security OR military OR defense OR espionage OR cyberattack OR 军事 OR 情报 OR 网络攻击)'
 	};
 
 	try {
 		// Add English language filter and timespan for fresh results
 		const baseQuery = categoryQueries[category];
-		const fullQuery = `${baseQuery} sourcelang:english`;
+		const fullQuery = baseQuery;
 		// Build the raw GDELT URL with timespan=7d to get recent articles
-		const gdeltUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${fullQuery}&timespan=7d&mode=artlist&maxrecords=20&format=json&sort=date`;
+		const gdeltUrl = `https://api.gdeltproject.org/api/v2/doc/doc?query=${fullQuery}&timespan=7d&mode=artlist&maxrecords=25&format=json&sort=date`;
 
 		logger.log('News API', `Fetching ${category} from GDELT`);
 

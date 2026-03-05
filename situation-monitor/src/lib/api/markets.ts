@@ -5,7 +5,7 @@
  * Free tier: 60 calls/minute
  */
 
-import { INDICES, SECTORS, COMMODITIES, CRYPTO } from '$lib/config/markets';
+import { INDICES, SECTORS, COMMODITIES, CRYPTO, CN_INDICES } from '$lib/config/markets';
 import type { MarketItem, SectorPerformance, CryptoItem } from '$lib/types';
 import { fetchWithProxy, logger, FINNHUB_API_KEY, FINNHUB_BASE_URL } from '$lib/config/api';
 
@@ -266,4 +266,78 @@ export async function fetchAllMarkets(): Promise<AllMarketsData> {
 	]);
 
 	return { crypto, indices, sectors, commodities };
+}
+
+interface YahooFinanceQuote {
+	regularMarketPrice?: number;
+	regularMarketChange?: number;
+	regularMarketChangePercent?: number;
+	regularMarketPreviousClose?: number;
+}
+
+interface YahooFinanceResult {
+	meta?: YahooFinanceQuote;
+	indicators?: { quote?: { close?: (number | null)[] }[] };
+}
+
+interface YahooFinanceResponse {
+	chart?: { result?: YahooFinanceResult[]; error?: unknown };
+}
+
+/**
+ * Fetch a quote from Yahoo Finance via proxy (supports CN A-share, HK indices)
+ */
+async function fetchYahooQuote(symbol: string): Promise<YahooFinanceQuote | null> {
+	try {
+		const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
+		const response = await fetchWithProxy(url);
+
+		if (!response.ok) {
+			throw new Error(`HTTP ${response.status}`);
+		}
+
+		const data: YahooFinanceResponse = await response.json();
+		const meta = data?.chart?.result?.[0]?.meta;
+		if (!meta) return null;
+
+		return meta;
+	} catch (error) {
+		logger.error('Markets API', `Error fetching Yahoo quote for ${symbol}:`, error);
+		return null;
+	}
+}
+
+/**
+ * Fetch Chinese A-share and HK market indices via Yahoo Finance
+ */
+export async function fetchCNMarkets(): Promise<MarketItem[]> {
+	try {
+		logger.log('Markets API', 'Fetching CN markets from Yahoo Finance');
+
+		const quotes = await Promise.all(
+			CN_INDICES.map(async (index) => {
+				const quote = await fetchYahooQuote(index.symbol);
+				return { index, quote };
+			})
+		);
+
+		return quotes.map(({ index, quote }) => ({
+			symbol: index.symbol,
+			name: index.name,
+			price: quote?.regularMarketPrice ?? NaN,
+			change: quote?.regularMarketChange ?? NaN,
+			changePercent: quote?.regularMarketChangePercent ?? NaN,
+			type: 'index' as const
+		}));
+	} catch (error) {
+		logger.error('Markets API', 'Error fetching CN markets:', error);
+		return CN_INDICES.map((i) => ({
+			symbol: i.symbol,
+			name: i.name,
+			price: NaN,
+			change: NaN,
+			changePercent: NaN,
+			type: 'index' as const
+		}));
+	}
 }
