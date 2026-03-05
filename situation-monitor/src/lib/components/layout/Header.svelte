@@ -16,14 +16,19 @@
 
 <header class="header">
 	<div class="header-left">
-		<h1 class="logo">{$tr.header.title}</h1>
+		<h1 class="logo">
+			<span class="logo-mark">◈</span>
+			{$tr.header.title}
+		</h1>
 	</div>
 
 	<div class="header-center">
 		<div class="refresh-status">
 			{#if $isRefreshing}
+				<span class="live-dot refreshing"></span>
 				<span class="status-text loading">{$tr.header.refreshing}</span>
 			{:else}
+				<span class="live-dot"></span>
 				<span class="status-text">{lastRefreshText}</span>
 			{/if}
 		</div>
@@ -45,30 +50,57 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0.5rem 1rem;
-		background: var(--surface);
+		padding: 0 1rem;
+		height: 44px;
+		background: rgba(13, 23, 36, 0.95);
+		backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--border);
+		box-shadow: 0 1px 0 rgba(0, 207, 255, 0.06);
 		position: sticky;
 		top: 0;
 		z-index: 100;
 		gap: 1rem;
 	}
 
+	/* Subtle top accent line */
+	.header::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			var(--accent) 40%,
+			rgba(0, 207, 255, 0.4) 70%,
+			transparent 100%
+		);
+	}
+
 	.header-left {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		flex-shrink: 0;
 	}
 
 	.logo {
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 		font-weight: 700;
-		letter-spacing: 0.1em;
-		color: var(--text-primary);
+		letter-spacing: 0.12em;
+		color: var(--text);
 		margin: 0;
 		display: flex;
-		align-items: baseline;
-		gap: 0.5rem;
+		align-items: center;
+		gap: 0.45rem;
+		text-transform: uppercase;
+	}
+
+	.logo-mark {
+		color: var(--accent);
+		font-size: 1rem;
+		filter: drop-shadow(0 0 6px var(--accent-glow));
 	}
 
 	.header-center {
@@ -76,7 +108,6 @@
 		align-items: center;
 		flex: 1;
 		justify-content: center;
-		min-width: 0;
 	}
 
 	.refresh-status {
@@ -85,12 +116,28 @@
 		gap: 0.5rem;
 	}
 
+	.live-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--green);
+		box-shadow: 0 0 6px var(--green);
+		animation: pulse-glow 2.5s ease-in-out infinite;
+		flex-shrink: 0;
+	}
+
+	.live-dot.refreshing {
+		background: var(--accent);
+		box-shadow: 0 0 6px var(--accent);
+		animation: pulse-glow 0.6s ease-in-out infinite;
+	}
+
 	.status-text {
+		font-family: 'SF Mono', 'Fira Code', monospace;
 		font-size: 0.6rem;
 		color: var(--text-muted);
+		letter-spacing: 0.04em;
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.status-text.loading {
@@ -108,31 +155,38 @@
 		display: flex;
 		align-items: center;
 		gap: 0.3rem;
-		min-height: 2.75rem;
-		padding: 0.4rem 0.75rem;
+		height: 28px;
+		padding: 0 0.75rem;
 		background: transparent;
 		border: 1px solid var(--border);
-		border-radius: 4px;
-		color: var(--text-secondary);
+		border-radius: 5px;
+		color: var(--text-dim);
 		cursor: pointer;
-		transition: all 0.15s ease;
+		transition:
+			background 0.15s,
+			border-color 0.15s,
+			color 0.15s;
 		font-size: 0.65rem;
+		font-family: inherit;
+		letter-spacing: 0.04em;
 	}
 
 	.header-btn:hover {
-		background: var(--border);
-		color: var(--text-primary);
+		background: var(--accent-dim);
+		border-color: rgba(0, 207, 255, 0.4);
+		color: var(--accent);
 	}
 
 	.lang-btn {
 		font-weight: 700;
-		letter-spacing: 0.05em;
-		min-width: 2.5rem;
+		min-width: 2.8rem;
 		justify-content: center;
+		letter-spacing: 0.06em;
 	}
 
 	.btn-icon {
 		font-size: 0.8rem;
+		line-height: 1;
 	}
 
 	.btn-label {
@@ -142,6 +196,18 @@
 	@media (min-width: 768px) {
 		.btn-label {
 			display: inline;
+		}
+	}
+
+	@keyframes pulse-glow {
+		0%,
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.35;
+			transform: scale(0.7);
 		}
 	}
 </style>

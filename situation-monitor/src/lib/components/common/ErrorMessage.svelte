@@ -21,34 +21,40 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem;
+		padding: 1.5rem 1rem;
 		gap: 0.5rem;
 		text-align: center;
 	}
 
 	.error-icon {
-		font-size: 1.5rem;
-		opacity: 0.6;
+		font-size: 1.2rem;
+		opacity: 0.7;
+		color: var(--red);
 	}
 
 	.error-message {
-		font-size: 0.7rem;
-		color: var(--danger);
+		font-size: 0.68rem;
+		color: var(--red);
+		line-height: 1.4;
 	}
 
 	.retry-btn {
 		font-size: 0.6rem;
-		padding: 0.3rem 0.6rem;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: 4px;
-		color: var(--text-secondary);
+		padding: 0.3rem 0.8rem;
+		background: var(--red-dim);
+		border: 1px solid rgba(248, 81, 73, 0.3);
+		border-radius: 20px;
+		color: var(--red);
 		cursor: pointer;
-		transition: all 0.15s ease;
+		transition:
+			background 0.15s,
+			border-color 0.15s;
+		font-family: inherit;
+		letter-spacing: 0.04em;
 	}
 
 	.retry-btn:hover {
-		background: var(--border);
-		color: var(--text-primary);
+		background: rgba(248, 81, 73, 0.2);
+		border-color: rgba(248, 81, 73, 0.5);
 	}
 </style>

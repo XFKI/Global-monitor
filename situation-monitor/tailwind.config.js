@@ -4,22 +4,24 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				bg: '#0a0a0a',
-				surface: '#141414',
-				'surface-hover': '#1a1a1a',
-				border: '#2a2a2a',
-				'border-light': '#3a3a3a',
-				'text-primary': '#e8e8e8',
-				'text-dim': '#888888',
-				'text-muted': '#666666',
-				accent: '#ffffff',
-				danger: '#ff4444',
-				success: '#44ff88',
-				warning: '#ffaa00',
-				info: '#4488ff'
+				bg: '#070c12',
+				surface: '#0d1724',
+				'surface-2': '#132033',
+				'surface-hover': '#1a2b3e',
+				border: '#1e3248',
+				'border-light': '#2a4560',
+				'text-primary': '#c8daea',
+				'text-dim': '#5e7a94',
+				'text-muted': '#3a5268',
+				accent: '#00cfff',
+				danger: '#f85149',
+				success: '#2dce6a',
+				warning: '#ffba00',
+				info: '#4d8aff'
 			},
 			fontFamily: {
-				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'monospace']
+				sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				mono: ['SF Mono', 'Fira Code', 'JetBrains Mono', 'monospace']
 			},
 			fontSize: {
 				'2xs': '0.65rem'

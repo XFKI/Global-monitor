@@ -20,31 +20,35 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem;
-		gap: 0.5rem;
+		padding: 1.5rem 1rem;
+		gap: 0.75rem;
 	}
 
 	.spinner {
-		border: 2px solid var(--border);
-		border-top-color: var(--accent);
 		border-radius: 50%;
-		animation: spin 1s linear infinite;
+		border-style: solid;
+		border-color: rgba(0, 207, 255, 0.15);
+		border-top-color: var(--accent);
+		animation: spin 0.75s linear infinite;
+		box-shadow: 0 0 8px var(--accent-glow);
 	}
 
 	.sm .spinner {
 		width: 16px;
 		height: 16px;
+		border-width: 1.5px;
 	}
 
 	.md .spinner {
-		width: 24px;
-		height: 24px;
+		width: 22px;
+		height: 22px;
+		border-width: 2px;
 	}
 
 	.lg .spinner {
-		width: 32px;
-		height: 32px;
-		border-width: 3px;
+		width: 30px;
+		height: 30px;
+		border-width: 2.5px;
 	}
 
 	@keyframes spin {
@@ -54,15 +58,18 @@
 	}
 
 	.message {
-		font-size: 0.7rem;
-		color: var(--text-secondary);
+		font-size: 0.62rem;
+		color: var(--text-muted);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		font-family: 'SF Mono', 'Fira Code', monospace;
 	}
 
 	.sm .message {
-		font-size: 0.6rem;
+		font-size: 0.55rem;
 	}
 
 	.lg .message {
-		font-size: 0.8rem;
+		font-size: 0.7rem;
 	}
 </style>

@@ -55,6 +55,7 @@
 		align-items: center;
 		padding: 0.5rem 0;
 		border-bottom: 1px solid var(--border);
+		transition: background 0.15s;
 	}
 
 	.market-item:last-child {
@@ -72,19 +73,21 @@
 	}
 
 	.market-name {
-		font-size: 0.7rem;
+		font-size: 0.72rem;
 		font-weight: 500;
-		color: var(--text-primary);
+		color: var(--text);
 	}
 
 	.compact .market-name {
-		font-size: 0.65rem;
+		font-size: 0.68rem;
 	}
 
 	.market-symbol {
-		font-size: 0.55rem;
+		font-family: 'SF Mono', 'Fira Code', monospace;
+		font-size: 0.52rem;
 		color: var(--text-muted);
 		text-transform: uppercase;
+		letter-spacing: 0.06em;
 	}
 
 	.market-data {
@@ -95,32 +98,39 @@
 	}
 
 	.market-price {
-		font-size: 0.7rem;
-		font-weight: 500;
-		color: var(--text-primary);
+		font-family: 'SF Mono', 'Fira Code', monospace;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--text);
 		font-variant-numeric: tabular-nums;
 	}
 
 	.compact .market-price {
-		font-size: 0.65rem;
+		font-size: 0.68rem;
 	}
 
 	.market-change {
-		font-size: 0.6rem;
-		font-weight: 500;
+		font-family: 'SF Mono', 'Fira Code', monospace;
+		font-size: 0.62rem;
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
+		padding: 0.05rem 0.35rem;
+		border-radius: 20px;
 	}
 
 	.market-change.up {
-		color: var(--success);
+		color: var(--green);
+		background: var(--green-dim);
 	}
 
 	.market-change.down {
-		color: var(--danger);
+		color: var(--red);
+		background: var(--red-dim);
 	}
 
 	.unavailable {
 		color: var(--text-muted);
 		opacity: 0.5;
+		background: transparent;
 	}
 </style>

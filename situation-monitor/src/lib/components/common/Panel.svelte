@@ -93,10 +93,23 @@
 	.panel {
 		background: var(--surface);
 		border: 1px solid var(--border);
-		border-radius: 4px;
+		border-left: 2px solid var(--accent);
+		border-radius: 0 6px 6px 0;
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
+		transition:
+			border-color 0.2s,
+			box-shadow 0.2s;
+		animation: fade-in 0.3s ease both;
+	}
+
+	.panel:hover {
+		border-color: var(--border-light);
+		border-left-color: var(--accent);
+		box-shadow:
+			0 0 0 1px rgba(0, 207, 255, 0.06),
+			0 4px 16px rgba(0, 0, 0, 0.3);
 	}
 
 	.panel.draggable {
@@ -112,9 +125,9 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.5rem 0.75rem;
-		background: var(--surface);
+		background: linear-gradient(90deg, rgba(0, 207, 255, 0.04) 0%, var(--surface) 60%);
 		border-bottom: 1px solid var(--border);
-		min-height: 2rem;
+		min-height: 2.25rem;
 	}
 
 	.panel-title-row {
@@ -125,52 +138,61 @@
 
 	.panel-title {
 		font-size: 0.65rem;
-		font-weight: 600;
+		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--text-secondary);
+		letter-spacing: 0.08em;
+		color: var(--text-dim);
 		margin: 0;
 	}
 
 	.panel-count {
-		font-size: 0.65rem;
-		font-weight: 500;
+		font-family: 'SF Mono', 'Fira Code', monospace;
+		font-size: 0.6rem;
+		font-weight: 700;
 		color: var(--accent);
-		background: rgba(var(--accent-rgb), 0.1);
-		padding: 0.1rem 0.4rem;
-		border-radius: 3px;
+		background: var(--accent-dim);
+		border: 1px solid rgba(0, 207, 255, 0.2);
+		padding: 0.05rem 0.45rem;
+		border-radius: 20px;
+		min-width: 1.4rem;
+		text-align: center;
 	}
 
 	.panel-status {
-		font-size: 0.6rem;
-		font-weight: 600;
-		padding: 0.1rem 0.4rem;
-		border-radius: 3px;
+		font-size: 0.55rem;
+		font-weight: 700;
+		padding: 0.1rem 0.45rem;
+		border-radius: 20px;
 		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.panel-status.monitoring {
-		color: var(--text-secondary);
-		background: rgba(255, 255, 255, 0.05);
+		color: var(--text-dim);
+		background: var(--surface-2, #132033);
+		border: 1px solid var(--border);
 	}
 
 	.panel-status.elevated {
-		color: #ffa500;
-		background: rgba(255, 165, 0, 0.15);
+		color: var(--yellow);
+		background: var(--yellow-dim);
+		border: 1px solid rgba(255, 186, 0, 0.25);
 	}
 
 	.panel-status.critical {
-		color: #ff4444;
-		background: rgba(255, 68, 68, 0.15);
+		color: var(--red);
+		background: var(--red-dim);
+		border: 1px solid rgba(248, 81, 73, 0.25);
 	}
 
 	.panel-loading {
-		width: 12px;
-		height: 12px;
-		border: 2px solid var(--border);
+		width: 10px;
+		height: 10px;
+		border: 1.5px solid rgba(0, 207, 255, 0.2);
 		border-top-color: var(--accent);
 		border-radius: 50%;
-		animation: spin 1s linear infinite;
+		animation: spin 0.7s linear infinite;
+		filter: drop-shadow(0 0 3px var(--accent-glow));
 	}
 
 	@keyframes spin {
@@ -188,21 +210,26 @@
 	.panel-collapse-btn {
 		background: none;
 		border: none;
-		color: var(--text-secondary);
+		color: var(--text-muted);
 		cursor: pointer;
-		padding: 0.25rem;
+		padding: 0.2rem 0.3rem;
 		font-size: 0.5rem;
 		line-height: 1;
+		border-radius: 3px;
+		transition:
+			color 0.15s,
+			background 0.15s;
 	}
 
 	.panel-collapse-btn:hover {
-		color: var(--text-primary);
+		color: var(--accent);
+		background: var(--accent-dim);
 	}
 
 	.panel-content {
 		flex: 1;
 		overflow-y: auto;
-		padding: 0.5rem;
+		padding: 0.6rem 0.75rem;
 	}
 
 	.panel-content.hidden {
@@ -212,14 +239,26 @@
 	.error-msg {
 		color: var(--danger);
 		text-align: center;
-		padding: 1rem;
+		padding: 1.5rem 1rem;
 		font-size: 0.7rem;
 	}
 
 	.loading-msg {
-		color: var(--text-secondary);
+		color: var(--text-muted);
 		text-align: center;
-		padding: 1rem;
+		padding: 1.5rem 1rem;
 		font-size: 0.7rem;
+		letter-spacing: 0.05em;
+	}
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 </style>

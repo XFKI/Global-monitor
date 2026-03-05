@@ -20,20 +20,20 @@
 <style>
 	.dashboard {
 		flex: 1;
-		padding: 0.5rem;
+		padding: 0.75rem 0.5rem;
 		overflow-y: auto;
 	}
 
 	.dashboard-grid {
 		column-count: 1;
-		column-gap: 0.5rem;
-		max-width: 2000px;
+		column-gap: 0.6rem;
+		max-width: 2200px;
 		margin: 0 auto;
 	}
 
 	.dashboard-grid > :global(*) {
 		break-inside: avoid;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.6rem;
 	}
 
 	@media (min-width: 600px) {
