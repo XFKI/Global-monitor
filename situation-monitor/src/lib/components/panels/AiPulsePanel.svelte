@@ -20,7 +20,7 @@
 	const count = $derived(items.length);
 
 	// Classify items into topic clusters
-	const topicMap = $derived(() => {
+	const topicMap = $derived.by(() => {
 		const map = new Map<string, typeof items>();
 		AI_TOPIC_CLUSTERS.forEach((c) => map.set(c.label, []));
 		map.set('其他', []);
@@ -42,18 +42,17 @@
 	});
 
 	// Hot topics sorted by item count descending
-	const hotTopics = $derived(() => {
-		const tm = topicMap();
-		return [...tm.entries()]
+	const hotTopics = $derived.by(() =>
+		[...topicMap.entries()]
 			.filter(([, v]) => v.length > 0)
 			.sort(([, a], [, b]) => b.length - a.length)
-			.slice(0, 6);
-	});
+			.slice(0, 6)
+	);
 
 	let activeTab = $state<string>('');
-	const currentItems = $derived(() => {
-		const tab = activeTab || (hotTopics()[0]?.[0] ?? '');
-		return topicMap().get(tab) ?? items.slice(0, 15);
+	const currentItems = $derived.by(() => {
+		const tab = activeTab || (hotTopics[0]?.[0] ?? '');
+		return topicMap.get(tab) ?? items.slice(0, 15);
 	});
 </script>
 
@@ -66,10 +65,10 @@
 	{:else}
 		<!-- Hot topic tabs -->
 		<div class="topic-tabs">
-			{#each hotTopics() as [label, topicItems]}
+			{#each hotTopics as [label, topicItems]}
 				<button
 					class="topic-tab"
-					class:active={activeTab === label || (!activeTab && hotTopics()[0]?.[0] === label)}
+					class:active={activeTab === label || (!activeTab && hotTopics[0]?.[0] === label)}
 					onclick={() => (activeTab = activeTab === label ? '' : label)}
 				>
 					<span class="tab-label">{label}</span>
@@ -80,8 +79,8 @@
 
 		<!-- Trend heat bar -->
 		<div class="heat-bar">
-			{#each hotTopics() as [label, topicItems]}
-				{@const pct = Math.round((topicItems.length / count) * 100)}
+			{#each hotTopics as [label, topicItems]}
+				{@const pct = count > 0 ? Math.round((topicItems.length / count) * 100) : 0}
 				<div
 					class="heat-segment"
 					style="width: {pct}%; background: hsl({120 - pct * 1.2}, 80%, 40%)"
@@ -92,7 +91,7 @@
 
 		<!-- News list for selected topic -->
 		<div class="news-list">
-			{#each currentItems().slice(0, 12) as item (item.id)}
+			{#each currentItems.slice(0, 12) as item (item.id)}
 				<NewsItem {item} />
 			{/each}
 		</div>

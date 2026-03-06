@@ -53,13 +53,13 @@ export const CRYPTO = [
 ];
 
 // Chinese A-share and HK indices
+// secid format: market.code  (1=SH, 0=SZ, 116=HK)
 export const CN_INDICES = [
-	{ symbol: '000001.SS', name: '上证指数', display: 'SSE', exchange: '上交所' },
-	{ symbol: '399001.SZ', name: '深证成指', display: 'SZSE', exchange: '深交所' },
-	{ symbol: '000300.SH', name: '沪深300', display: 'CSI300', exchange: '沪深' },
-	{ symbol: '399006.SZ', name: '创业板指', display: 'GEM', exchange: '创业板' },
-	{ symbol: '^HSI', name: '恒生指数', display: 'HSI', exchange: '港交所' },
-	{ symbol: '^HSCE', name: '国企指数', display: 'HSCE', exchange: '港交所' }
+	{ symbol: '000001.SS', secid: '1.000001', name: '上证指数', display: 'SSE', exchange: '上交所' },
+	{ symbol: '399001.SZ', secid: '0.399001', name: '深证成指', display: 'SZSE', exchange: '深交所' },
+	{ symbol: '000300.SH', secid: '1.000300', name: '沪深300', display: 'CSI300', exchange: '沪深' },
+	{ symbol: '399006.SZ', secid: '0.399006', name: '创业板指', display: 'GEM', exchange: '创业板' },
+	{ symbol: '^HSI', secid: '116.HSI', name: '恒生指数', display: 'HSI', exchange: '港交所' }
 ];
 
 // Chinese A-share sector ETFs (via Sina Finance / Yahoo Finance)

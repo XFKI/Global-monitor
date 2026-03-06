@@ -268,70 +268,29 @@ export async function fetchAllMarkets(): Promise<AllMarketsData> {
 	return { crypto, indices, sectors, commodities };
 }
 
-interface YahooFinanceQuote {
-	regularMarketPrice?: number;
-	regularMarketChange?: number;
-	regularMarketChangePercent?: number;
-	regularMarketPreviousClose?: number;
+// ============================================================================
+// Eastmoney API — Chinese A-share + HK indices (no auth needed)
+// ============================================================================
+
+interface EastmoneyItem {
+	f2: number; // current price (float when fltt=2)
+	f3: number; // change percent
+	f4: number; // change amount
+	f12: string; // code
+	f14: string; // name
 }
 
-interface YahooFinanceResult {
-	meta?: YahooFinanceQuote;
-	indicators?: { quote?: { close?: (number | null)[] }[] };
-}
-
-interface YahooFinanceResponse {
-	chart?: { result?: YahooFinanceResult[]; error?: unknown };
-}
-
-/**
- * Fetch a quote from Yahoo Finance via proxy (supports CN A-share, HK indices)
- */
-async function fetchYahooQuote(symbol: string): Promise<YahooFinanceQuote | null> {
-	try {
-		const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
-		const response = await fetchWithProxy(url);
-
-		if (!response.ok) {
-			throw new Error(`HTTP ${response.status}`);
-		}
-
-		const data: YahooFinanceResponse = await response.json();
-		const meta = data?.chart?.result?.[0]?.meta;
-		if (!meta) return null;
-
-		return meta;
-	} catch (error) {
-		logger.error('Markets API', `Error fetching Yahoo quote for ${symbol}:`, error);
-		return null;
-	}
+interface EastmoneyBatchResponse {
+	data?: { diff?: EastmoneyItem[] };
 }
 
 /**
- * Fetch Chinese A-share and HK market indices via Yahoo Finance
+ * Fetch Chinese A-share and HK market indices via Eastmoney push2 API
+ * Uses fltt=2 so prices are returned as floats (no manual descaling needed)
  */
 export async function fetchCNMarkets(): Promise<MarketItem[]> {
-	try {
-		logger.log('Markets API', 'Fetching CN markets from Yahoo Finance');
-
-		const quotes = await Promise.all(
-			CN_INDICES.map(async (index) => {
-				const quote = await fetchYahooQuote(index.symbol);
-				return { index, quote };
-			})
-		);
-
-		return quotes.map(({ index, quote }) => ({
-			symbol: index.symbol,
-			name: index.name,
-			price: quote?.regularMarketPrice ?? NaN,
-			change: quote?.regularMarketChange ?? NaN,
-			changePercent: quote?.regularMarketChangePercent ?? NaN,
-			type: 'index' as const
-		}));
-	} catch (error) {
-		logger.error('Markets API', 'Error fetching CN markets:', error);
-		return CN_INDICES.map((i) => ({
+	const emptyCN = (): MarketItem[] =>
+		CN_INDICES.map((i) => ({
 			symbol: i.symbol,
 			name: i.name,
 			price: NaN,
@@ -339,5 +298,41 @@ export async function fetchCNMarkets(): Promise<MarketItem[]> {
 			changePercent: NaN,
 			type: 'index' as const
 		}));
+
+	try {
+		logger.log('Markets API', 'Fetching CN markets from Eastmoney');
+
+		const secids = CN_INDICES.map((i) => i.secid).join(',');
+		const url =
+			`https://push2.eastmoney.com/api/qt/ulist/get?secids=${secids}` +
+			`&fltt=2&fields=f2,f3,f4,f12,f14&pn=1&pz=20&po=1&np=1&invt=2`;
+
+		const response = await fetchWithProxy(url);
+		if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+		const data: EastmoneyBatchResponse = await response.json();
+		const diff = data?.data?.diff ?? [];
+
+		if (diff.length === 0) {
+			logger.warn('Markets API', 'Eastmoney returned empty diff array');
+			return emptyCN();
+		}
+
+		// Match by code extracted from secid (e.g. '1.000001' → '000001', '116.HSI' → 'HSI')
+		return CN_INDICES.map((index) => {
+			const code = index.secid.split('.').slice(1).join('.');
+			const item = diff.find((d) => d.f12 === code);
+			return {
+				symbol: index.symbol,
+				name: index.name,
+				price: item?.f2 ?? NaN,
+				change: item?.f4 ?? NaN,
+				changePercent: item?.f3 ?? NaN,
+				type: 'index' as const
+			};
+		});
+	} catch (error) {
+		logger.error('Markets API', 'Error fetching CN markets:', error);
+		return emptyCN();
 	}
 }

@@ -18,7 +18,7 @@
 	{:else}
 		<div class="cn-markets-list">
 			{#each items as item (item.symbol)}
-				<MarketItem {item} />
+				<MarketItem {item} currencySymbol="" />
 			{/each}
 		</div>
 
